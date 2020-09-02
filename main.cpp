@@ -2,9 +2,6 @@
     Developed by Eduardo Luiz Oliani
 
     Ununciado:
-
-
-
     Fazer um programa que permita a inclusão de um grafo (dirigido ou não dirigido), mostrando o Grafo (desenhado) ou a Matriz/lista de adjacências.
     O programa deve permitir:
     - Incluir ou excluir vértices e arestas/arcos a qualquer tempo
@@ -41,20 +38,74 @@
 #include <list>
 #include <algorithm>
 #include <graph.h>
+#include <windows.h>
 
 using namespace std;
 
-int main()
-{
-    //Geração do grafo
-    Graph grafo(4);
+void startMatrix(int **matrix[20][20], int tam){
+    for(int i = 0; i < tam; i++){
+        for (int j = 0; j < tam; j++)
+            matrix[i][j] = 0;
+    }
+}
 
-    //add aresta
-    grafo.addAresta(0,1);
-    grafo.addAresta(0,3);
-    grafo.addAresta(1,2);
-    grafo.addAresta(3,1);
-    grafo.addAresta(3,2);
+void printMatrix(int **matrix[20][20], int tam){
+    for(int i = 0; i < tam; i++){
+        for (int j = 0; j < tam; j++){
+            cout << **matrix[i][j] << " | ";
+        }
+        cout << "\n";
+    }
+}
+
+int main(){
+    //Geração do grafo
+    Graph grafo(20);
+    int **matriz[20][20];
+    startMatrix(matriz, 20);
+    int total_vertices = 0;
+    int input = NULL;
+
+    do{
+        system("cls");
+        cout << "1 - Adicionar aresta\n";
+        cout << "2 - Remover no";
+        cout << "3 - Verificar adjacência entre 2 vertices";
+        cout << "4 - Vizualizar Grau de saida de um no";
+        cout << "5 - Vizualizar matriz";
+        cout << "0 - Sair";
+        cin >> input;
+
+        if (input == 1){ // ADD Aresta
+            int n1 = 0;
+            int n2 = 0;
+            while(n1 <= 0 || n1 > 20){
+                cout << "Dgite o valor primeiro no: ";
+                 cin >> n1;
+                 if (n1 <= 0 || n1 > 20){
+                     cout << "Entrada inválida, pressione enter e tente novamente!";
+                     system("pause");
+                 }
+            }
+            while(n2 <= 0 || n2 > 20){
+                cout << "Dgite o valor do no adjacente de " << n1 << ":";
+                cin >> n2;
+                if (n2 <= 0 || n2 > 20){
+                    cout << "Entrada inválida, pressione enter e tente novamente!";
+                    system("pause");
+                }
+            }
+            cout << n1 << " -> " << n2 << "  - Vertice adicionado com sucesso!";
+            total_vertices += 1;
+            grafo.addAresta(n1, n2);
+            system("pause");
+        }
+
+
+    } while (input != 0);
+
+
+
 
     //Mostrando grau de saido do vértice
     cout << "\nGrau de saida do vertice 1: " << grafo.grauSaida(1);

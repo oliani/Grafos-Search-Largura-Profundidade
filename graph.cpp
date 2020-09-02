@@ -1,3 +1,9 @@
+/*
+ *  Developed by Eduardo Luiz Oliani
+ *
+ *
+ */
+
 #include "graph.h"
 
 Graph::Graph(int n_vertex)
@@ -6,9 +12,16 @@ Graph::Graph(int n_vertex)
     adj = new std::list<int>[V];//cada vetor possui uma lista de vizinhos
 }
 
-void Graph::addAresta(int v1, int v2)
+bool Graph::removerAresta(int v1, int v2)
+{
+    this->adj[v1].remove(v2);
+    return true;
+}
+
+bool Graph::addAresta(int v1, int v2)
 {
     this->adj[v1].push_back(v2); //Add vertice v2 á lista de adjacentes de v1
+    return true;
 }
 
 int Graph::grauSaida(int v)
