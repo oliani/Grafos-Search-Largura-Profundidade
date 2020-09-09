@@ -1,97 +1,71 @@
-/*
+/**
     Developed by Eduardo Luiz Oliani
 
     Ununciado:
-    Fazer um programa que permita a inclusÃ£o de um grafo (dirigido ou nÃ£o dirigido), mostrando o Grafo (desenhado) ou a Matriz/lista de adjacÃªncias.
+    Fazer um programa que permita a inclusão de um grafo (dirigido ou não dirigido), mostrando o Grafo (desenhado) ou a Matriz/lista de adjacências.
     O programa deve permitir:
-    - Incluir ou excluir vÃ©rtices e arestas/arcos a qualquer tempo
-    - Fazer busca em Largura e Profundidade. Com opÃ§Ã£o de buscar algum elemento do grafo ou mostrar todos os vÃ©rtices do grafo na ordem de visitaÃ§Ã£o.
-    - O ponto de inicio da busca deve ser informado pelo usuÃ¡rio.
+    - Incluir ou excluir vértices e arestas/arcos a qualquer tempo (OK)
+    - Fazer busca em Largura e Profundidade. Com opção de buscar algum elemento do grafo ou mostrar todos os vértices do grafo na ordem de visitação. (OK)
+    - O ponto de inicio da busca deve ser informado pelo usuário.
 
     --> Trabalho pode ser feito em duplas.
-    --> AtenÃ§Ã£o ao prazo para publicaÃ§Ã£o da soluÃ§Ã£o.
-
-    CaracterÃ­sitcas co que eu fiz atÃ© agora:
-
-    Grafo Dirigido
-    Ainda nÃ£o Ã© possÃ­vel incluir e excluir arestas e vÃ©rtices
-    NÃ£o Ã© possÃ­vel fazer busca em profundidade, apenas em largura, uma vez que a o grafo Ã© dirigido
-    Temos vÃ¡rias arestas onde cada aresta contÃ©m a informaÃ§Ã£o do seu adjacente
-
-    como seria o desenho do grafo gerado abaixo
-
-
-    | 0 |-->| 1 |
-      |     ^ |
-      |    /  |
-      |   /   |
-      V  /    V
-    | 3 |-->| 2 |
-
-
-    Retornos possÃ­veis -> verificar se um vÃ©rtice Ã© adjascente do outro ou nÃ£o
+    --> Atenção ao prazo para publicação da solução.
 
 
 */
-
+#include <stdio.h>
 #include <iostream>
 #include <list>
+#include <stack>
 #include <algorithm>
 #include <graph.h>
 #include <windows.h>
 
+
 using namespace std;
 
-void startMatrix(int **matrix[20][20], int tam){
-    for(int i = 0; i < tam; i++){
-        for (int j = 0; j < tam; j++)
-            matrix[i][j] = 0;
-    }
-}
-
-void printMatrix(int **matrix[20][20], int tam){
-    for(int i = 0; i < tam; i++){
-        for (int j = 0; j < tam; j++){
-            cout << **matrix[i][j] << " | ";
-        }
-        cout << "\n";
-    }
-}
-
 int main(){
-    //GeraÃ§Ã£o do grafo
-    Graph grafo(20);
-    int **matriz[20][20];
-    startMatrix(matriz, 20);
+    //Geração do grafo
+    int tam = 7;
+    Graph grafo(tam);
+    int matriz[tam][tam];
     int total_vertices = 0;
-    int input = NULL;
+    int input = 0;
+
+    for (int i = 0; i < tam; i++){
+        for(int j = 0; j < tam; j++)
+            matriz[i][j] = 0;
+    }
 
     do{
         system("cls");
-        cout << "1 - Adicionar aresta\n";
-        cout << "2 - Remover no";
-        cout << "3 - Verificar adjacÃªncia entre 2 vertices";
-        cout << "4 - Vizualizar Grau de saida de um no";
-        cout << "5 - Vizualizar matriz";
-        cout << "0 - Sair";
-        cin >> input;
+        cout << "1 - Adicionar aresta";
+        cout << "\n2 - Remover aresta";
+        cout << "\n3 - Verificar adjacência entre 2 vertices";
+        cout << "\n4 - Vizualizar Grau de saida de um no";
+        cout << "\n5 - Vizualizar matriz";
+        cout << "\n6 - Busca em profundidade (DFS)";
+        cout << "\n7 - Busca em largura (BFS)";
+        cout << "\n0 - Sair";
+        cout << "\nDigite uma opcao: ";
+        cin >> (input);
 
         if (input == 1){ // ADD Aresta
             int n1 = 0;
             int n2 = 0;
-            while(n1 <= 0 || n1 > 20){
+            while(n1 <= 0 || n1 > tam -1){
                 cout << "Dgite o valor primeiro no: ";
                  cin >> n1;
-                 if (n1 <= 0 || n1 > 20){
-                     cout << "Entrada invÃ¡lida, pressione enter e tente novamente!";
+                 if (n1 <= 0 || n1 > tam -1){
+                     cout << "Entrada inválida, pressione enter e tente novamente!";
                      system("pause");
                  }
             }
-            while(n2 <= 0 || n2 > 20){
-                cout << "Dgite o valor do no adjacente de " << n1 << ":";
+            while(n2 <= 0 || n2 > tam -1){
+                cout << "Digite o valor do no adjacente de " << n1 << ":";
                 cin >> n2;
                 if (n2 <= 0 || n2 > 20){
-                    cout << "Entrada invÃ¡lida, pressione enter e tente novamente!";
+                    cout << "Entrada inválida, pressione enter e tente novamente!";
                     system("pause");
                 }
             }
@@ -99,31 +73,80 @@ int main(){
             total_vertices += 1;
             grafo.addAresta(n1, n2);
             system("pause");
+            matriz[n1 - 1][n2 - 1] = 1;
+        } else if (input == 2){
+            int node_i;
+            int node_j;
+            cout << "Digite o ponta A da aresta a ser removida: ";
+            cin >> node_i;
+            cout << "Digite o ponta B da aresta a ser removida: ";
+            cin >> node_j;
+            if (node_i > 0 && node_i <= tam && node_i > 0 && node_j <= tam){
+                grafo.removerAresta(node_i,node_j);
+
+            }
+
+        } else if (input == 3){
+            int a,b;
+            cout << "Digite a ponta A para verificar a adjacencia: ";
+            cin >> a;
+            cout << "Digite a ponta B para verificar a adjacencia: ";
+            cin >> b;
+            if (a > 0 && a < tam && b >0 && b < tam){
+                if (matriz[a -1][b -1] == 1){
+                    cout << "\nA e B sao adacentes!";
+                }
+                else{ cout << "\nA e B nao sao adacentes!\n"; }
+            } else{
+               cout << "\nA e B nao sao adacentes!\n";
+            }
+            system("pause");
+
+        } else if (input == 4){
+            cout << "Digite o veritice a ser obtido o grau de saida: ";
+            int valor;
+            cin >> valor;
+            if (valor > 0 && valor <= tam){
+                cout << grafo.grauSaida(valor);
+                system("pause");
+            }
+            else{
+                cout << "Entrada invalida";
+                system("pause");
+            }
+        } else if (input == 5){
+            system("cls");
+            cout << "Matriz representando a estrutura atual: \n\n";
+            cout <<  "   | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |10 |11 |12 |13 |14 |15 |16 |17 |18 |19 |20 |";
+            for (int i = 0; i < tam; i++){
+                if (i <= 8)
+                   cout << "\n" << " " << i + 1<< " | ";
+                else
+                cout << "\n" << i + 1 << " | ";
+                for(int j = 0; j < tam; j++){
+                    cout << matriz[i][j] << " | ";
+                }
+            }
+            cout << "\n";
+            system("pause");
+        } else if (input == 6){
+            int raiz;
+            cout << "Digite a raiz de pesquisa DFS: ";
+            cin >> raiz;
+            grafo.dfs(raiz);
+            system("pause");
+        } else if(input == 7){
+            int raiz;
+            cout << "Digite a raiz de pesquisa BTS: ";
+            cin >> raiz;
+            grafo.dfs(raiz);
+            system("pause");
+        }else{
+            cout << "Input invalida";
+            system("pause");
         }
 
+    }while(input != 0);
 
-    } while (input != 0);
-
-
-
-
-    //Mostrando grau de saido do vÃ©rtice
-    cout << "\nGrau de saida do vertice 1: " << grafo.grauSaida(1);
-    cout << "\nGrau de saida do vertice 2: " << grafo.grauSaida(2);
-    cout << "\nGrau de saida do vertice 3: " << grafo.grauSaida(3);
-    cout << "\n";
-
-    //Verifica adjascentes
-    if(grafo.verifificarAdjacencia(0,1))
-        cout << "\n0 e adjascente de 1";
-    else
-        cout << "\n0 nao e adjascente de 1";
-
-    if(grafo.verifificarAdjacencia(1,0))
-       cout << "\n1 e adjascente de 0";
-    else
-        cout << "\n1 nao e adjascente de 0";
-
-    cout << "\n";
     return 0;
 }
